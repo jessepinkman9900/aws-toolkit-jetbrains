@@ -23,7 +23,7 @@ object LambdaBuilderTestUtils {
         runtime: Runtime,
         handler: String,
         useContainer: Boolean = false
-    ): BuiltLambda {
+    ): BuiltLambda2 {
         val samOptions = SamOptions()
         samOptions.buildInContainer = useContainer
 
@@ -35,14 +35,14 @@ object LambdaBuilderTestUtils {
         template: Path,
         logicalId: String,
         useContainer: Boolean = false
-    ): BuiltLambda {
+    ): BuiltLambda2 {
         val samOptions = SamOptions()
         samOptions.buildInContainer = useContainer
 
         return this.buildLambdaFromTemplate(module, template, logicalId, samOptions)
     }
 
-    fun verifyEntries(builtLambda: BuiltLambda, vararg entries: String) {
+    fun verifyEntries(builtLambda: BuiltLambda2, vararg entries: String) {
         val basePath = builtLambda.codeLocation
         Files.walk(builtLambda.codeLocation).use {
             val lambdaEntries = it.filter(Path::isFile)
@@ -52,7 +52,7 @@ object LambdaBuilderTestUtils {
         }
     }
 
-    fun verifyPathMappings(module: Module, builtLambda: BuiltLambda, vararg mappings: Pair<String, String>) {
+    fun verifyPathMappings(module: Module, builtLambda: BuiltLambda2, vararg mappings: Pair<String, String>) {
         val basePath = ModuleRootManager.getInstance(module).contentRoots[0].path
         val updatedPaths = mappings
             .map { (path, file) ->

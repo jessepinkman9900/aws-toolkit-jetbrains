@@ -34,7 +34,7 @@ object LambdaBuilderUtils {
         runtimeGroup: RuntimeGroup,
         request: BuildLambdaRequest,
         lambdaBuilder: LambdaBuilder = LambdaBuilder.getInstance(runtimeGroup)
-    ): CompletionStage<BuiltLambda> {
+    ): CompletionStage<BuiltLambda2> {
         val buildViewManager = ServiceManager.getService(module.project, BuildViewManager::class.java)
 
         return runSamBuildInBackground(buildViewManager, module, request) {
@@ -98,7 +98,7 @@ object LambdaBuilderUtils {
         module: Module,
         request: BuildLambdaRequest,
         processListener: ProcessListener
-    ): BuiltLambda = when (request) {
+    ): BuiltLambda2 = when (request) {
         is BuildLambdaFromTemplate -> {
             lambdaBuilder.buildLambdaFromTemplate(
                 module,

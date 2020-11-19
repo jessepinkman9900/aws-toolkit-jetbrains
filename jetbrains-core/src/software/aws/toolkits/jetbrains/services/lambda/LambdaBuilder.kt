@@ -49,6 +49,13 @@ abstract class LambdaBuilder {
         return Paths.get(contentRoot.path, ".aws-sam", "build")
     }
 
+    open fun defaultPathMappings(sourceTemplate: Path, logicalId: String, buildDir: Path): List<PathMapping> = buildList {
+        add(PathMapping(buildDir.resolve(logicalId).normalize().toString(), TASK_PATH))
+
+        val codeLocation = SamTemplateUtils.getCodeLocation(sourceTemplate, logicalId)
+        add(PathMapping(sourceTemplate.resolveSibling(codeLocation).normalize().toString(), TASK_PATH))
+    }
+
     /**
      * Creates a package for the given lambda including source files archived in the correct format.
      */
@@ -62,7 +69,7 @@ abstract class LambdaBuilder {
         envVars: Map<String, String>,
         samOptions: SamOptions,
         onStart: (ProcessHandler) -> Unit = {}
-    ): BuiltLambda {
+    ): BuiltLambda2 {
         val baseDir = handlerBaseDirectory(module, handlerElement).toString()
         val buildDir = getBuildDirectory(module)
         Files.createDirectories(buildDir)
@@ -105,7 +112,7 @@ abstract class LambdaBuilder {
         logicalId: String,
         samOptions: SamOptions,
         onStart: (ProcessHandler) -> Unit = {}
-    ): BuiltLambda {
+    ): BuiltLambda2 {
         val functions = SamTemplateUtils.findFunctionsFromTemplate(
             module.project,
             templateLocation.toFile()
@@ -147,7 +154,7 @@ abstract class LambdaBuilder {
                 throw IllegalStateException("Failed to locate built template, $builtTemplate does not exist")
             }
 
-            return@runBlocking BuiltLambda(builtTemplate, buildDir.resolve(logicalId), pathMappings)
+            return@runBlocking BuiltLambda2(builtTemplate, buildDir.resolve(logicalId), pathMappings)
         }
     }
 
@@ -157,7 +164,7 @@ abstract class LambdaBuilder {
         /*
          * The default path to the task. The default is consistent across both Zip and Image based functions.
          */
-        private const val TASK_PATH = "/var/task"
+        const val TASK_PATH = "/var/task"
     }
 }
 
@@ -168,7 +175,7 @@ abstract class LambdaBuilder {
  * @param codeLocation The path to the built lambda directory
  * @param mappings Source mappings from original codeLocation to the path inside of the archive
  */
-data class BuiltLambda(
+data class BuiltLambda2(
     val templateLocation: Path,
     val codeLocation: Path,
     val mappings: List<PathMapping> = emptyList()
