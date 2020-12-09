@@ -79,7 +79,7 @@ object SamTemplateUtils {
         val s3bucketKey = codeUri.removePrefix(S3_URI_PREFIX)
         val split = s3bucketKey.split("/", limit = 2)
         if (split.size != 2) {
-            throw IllegalStateException("$codeUri does not follow the format ${S3_URI_PREFIX}<bucket>/<key>")
+            throw IllegalStateException("$codeUri does not follow the format $S3_URI_PREFIX<bucket>/<key>")
         }
 
         return UploadedS3Code(
@@ -100,15 +100,14 @@ object SamTemplateUtils {
     private fun JsonNode.packageType(): PackageType {
         val key = "PackageType"
         val type = this.get(key)?.textValue() ?: return PackageType.ZIP
-        return PackageType.knownValues().firstOrNull { it.toString() == type } ?: throw IllegalStateException(message("cloudformation.invalid_property", key, type))
+        return PackageType.knownValues().firstOrNull { it.toString() == type }
+            ?: throw IllegalStateException(message("cloudformation.invalid_property", key, type))
     }
 
     private fun JsonNode.isServerlessFunction(): Boolean = this.get("Type")?.textValue() == SERVERLESS_FUNCTION_TYPE
 
-    private fun <T> readTemplate(template: Path, function: JsonNode.() -> T): T {
-        return template.inputStream().use {
-            function(MAPPER.readTree(it))
-        }
+    private fun <T> readTemplate(template: Path, function: JsonNode.() -> T): T = template.inputStream().use {
+        function(MAPPER.readTree(it))
     }
 
     @JvmStatic
