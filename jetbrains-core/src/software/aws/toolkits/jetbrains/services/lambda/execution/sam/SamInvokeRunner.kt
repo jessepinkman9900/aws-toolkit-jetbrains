@@ -204,7 +204,7 @@ class SamInvokeRunner : AsyncProgramRunner<RunnerSettings>() {
         return BuildRequest(
             dummyTemplate,
             dummyLogicalId,
-            lambdaBuilder.additionalEnvironmentVariables(module, samOptions),
+            lambdaBuilder.additionalBuildEnvironmentVariables(module, samOptions),
             lambdaBuilder.getBuildDirectory(module)
         )
     }

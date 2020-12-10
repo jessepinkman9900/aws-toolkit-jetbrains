@@ -38,6 +38,12 @@ class BuildLambda(
     }
 }
 
+/**
+ * Represents the result of building a Lambda
+ *
+ * @param templateLocation The path to the build generated template
+ * @param logicalId Optional logical id if we are building a specific function
+ */
 data class BuiltLambda(
     val templateLocation: Path,
     val logicalId: String?
