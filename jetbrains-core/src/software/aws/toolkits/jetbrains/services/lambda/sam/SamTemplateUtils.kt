@@ -98,10 +98,9 @@ object SamTemplateUtils {
     private fun JsonNode.isImageBased(): Boolean = this.packageType() == PackageType.IMAGE
 
     private fun JsonNode.packageType(): PackageType {
-        val key = "PackageType"
-        val type = this.get(key)?.textValue() ?: return PackageType.ZIP
+        val type = this.at("/Properties/PackageType")?.textValue() ?: return PackageType.ZIP
         return PackageType.knownValues().firstOrNull { it.toString() == type }
-            ?: throw IllegalStateException(message("cloudformation.invalid_property", key, type))
+            ?: throw IllegalStateException(message("cloudformation.invalid_property", "PackageType", type))
     }
 
     private fun JsonNode.isServerlessFunction(): Boolean = this.get("Type")?.textValue() == SERVERLESS_FUNCTION_TYPE
